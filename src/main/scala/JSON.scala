@@ -1,7 +1,5 @@
 
 trait DynamicJSON extends Dynamic{
-  implicit private val amb1,amb2 = manifest[Nothing]
-  
   def applyDynamic(name:String)(args:Any*):DynamicJSON
   def typed[A : Manifest]: Option[A]
 }
@@ -63,6 +61,7 @@ case class ValueJSON[V : Manifest](value: V) extends DynamicJSON {
     else
       None
 
+  // debug method
   def manifestString:String = manifest[V].toString
 
 }
