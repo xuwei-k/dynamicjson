@@ -1,4 +1,3 @@
-
 trait DynamicJSON extends Dynamic{
   def applyDynamic(name:String)(args:Any*):DynamicJSON
   def typed[A : Manifest]: Option[A]
@@ -65,4 +64,3 @@ case class ValueJSON[V : Manifest](value: V) extends DynamicJSON {
   def manifestString:String = manifest[V].toString
 
 }
-// vim: set ts=2 sw=2 et:
