@@ -1,3 +1,5 @@
+package dynamicJSON
+
 trait DynamicJSON extends Dynamic{
   def applyDynamic(name:String)(args:Any*):DynamicJSON
   def typed[A : Manifest]: Option[A]
@@ -19,11 +21,11 @@ case class DynamicJSONObj(obj:Map[String,Any]) extends DynamicJSON {
 
   override def applyDynamic(name: String)(args: Any*): DynamicJSON = obj(name) match {
       case null | None => EmptyJSON
-//    case i: Int => ValueJSON(i)
-//    case l: Long => ValueJSON(l)
-      case d: Double => ValueJSON(d)
+//    case i: Int     => ValueJSON(i) // Maybe , Scala standard JSON library not return Int or Long .
+//    case l: Long    => ValueJSON(l)
+      case d: Double  => ValueJSON(d)
       case b: Boolean => ValueJSON(b)
-      case s: String => ValueJSON(s)
+      case s: String  => ValueJSON(s)
       case a: List[_] => {
         val classes = a.foldLeft(Set[Class[_]]()){ (set,elem) =>
           set + {
