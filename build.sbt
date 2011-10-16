@@ -20,3 +20,7 @@ scalacOptions ++= Seq(
 
 addCompilerPlugin("org.scala-tools.sxr" % "sxr_2.9.1" % "0.2.8-SNAPSHOT")
 
+initialCommands in console := {
+  "import dynamicJSON._"
+}
+
