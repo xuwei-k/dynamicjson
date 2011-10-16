@@ -1,6 +1,8 @@
+name := "DynamicJSON"
+
 version := "0.1-SNAPSHOT"
 
-organization := "com.github.xuwei_k"
+organization := "com.github.xuwei-k"
 
 scalaVersion := "2.9.1"
 
