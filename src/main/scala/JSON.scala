@@ -1,8 +1,11 @@
 package dynamicJSON
 
+import java.lang.{Boolean => JBool,Double => JDouble}
+
 trait DynamicJSON extends Dynamic{
   def applyDynamic(name:String)(args:Any*):DynamicJSON
   def typed[A : Manifest]: Option[A]
+  def array:List[DynamicJSON] = Nil 
 }
 
 object DynamicJSON{
@@ -13,39 +16,46 @@ object DynamicJSON{
     case None => EmptyJSON
   }
 
+  val cast:PartialFunction[Any,DynamicJSON] = {
+    case null | None => EmptyJSON
+//  case i: Int     => ValueJSON(i) // Maybe , Scala standard JSON library not return Int or Long .
+//  case l: Long    => ValueJSON(l)
+    case d: Double  => ValueJSON(d)
+//    case d: JDouble => ValueJSON(d.doubleValue) //TODO is this need ?
+    case b: Boolean => ValueJSON(b)
+//    case b: JBool   => ValueJSON(b.booleanValue)//TODO is this need ?
+    case s: String  => ValueJSON(s)
+    case a: List[_] => {
+      val classes = a.foldLeft(Set[Class[_]]()){ (set,elem) =>
+        set + {
+          if(elem == null) classOf[Null]
+          else elem.asInstanceOf[AnyRef].getClass
+        }
+      }
+      if(classes.size == 1){
+        a.head match{
+          case _:Double  => ValueJSON(a.asInstanceOf[List[Double]] )
+//        case _:JDouble => ValueJSON(a.asInstanceOf[List[Double]] )//TODO is this need ?
+          case _:Boolean => ValueJSON(a.asInstanceOf[List[Boolean]])
+//        case _:JBool   => ValueJSON(a.asInstanceOf[List[Boolean]])//TODO is this need ?
+          case _:String  => ValueJSON(a.asInstanceOf[List[String]] )
+          case _         => ValueJSON(a.asInstanceOf[List[Any]] )
+        }
+      }else{
+        ValueJSON[List[Any]](a)
+      }
+    }
+    case map:Map[String,Any] => new DynamicJSONObj(map)
+  }
+ 
 }
 
 case class DynamicJSONObj(obj:Map[String,Any]) extends DynamicJSON {
 
   override def typed[A: Manifest] = None
 
-  override def applyDynamic(name: String)(args: Any*): DynamicJSON = obj(name) match {
-      case null | None => EmptyJSON
-//    case i: Int     => ValueJSON(i) // Maybe , Scala standard JSON library not return Int or Long .
-//    case l: Long    => ValueJSON(l)
-      case d: Double  => ValueJSON(d)
-      case b: Boolean => ValueJSON(b)
-      case s: String  => ValueJSON(s)
-      case a: List[_] => {
-        val classes = a.foldLeft(Set[Class[_]]()){ (set,elem) =>
-          set + {
-            if(elem == null) classOf[Null]
-            else elem.asInstanceOf[AnyRef].getClass
-          }
-        }
-        if(classes.size == 1){
-          a.head match{
-            case _:Double  => ValueJSON(a.asInstanceOf[List[Double]])
-            case _:Boolean => ValueJSON(a.asInstanceOf[List[Boolean]] )
-            case _:String  => ValueJSON(a.asInstanceOf[List[String]] )
-            case _         => ValueJSON(a.asInstanceOf[List[Any]] )
-          }
-        }else{
-          ValueJSON[List[Any]](a)
-        }
-      }
-      case map:Map[String,Any] => new DynamicJSONObj(map)
-  }
+  override def applyDynamic(name: String)(args: Any*): DynamicJSON = DynamicJSON.cast(obj(name)) 
+ 
 }
 
 case object EmptyJSON extends DynamicJSON{
@@ -64,5 +74,10 @@ case class ValueJSON[V : Manifest](value: V) extends DynamicJSON {
 
   // debug method
   def manifestString:String = manifest[V].toString
+
+  override def array = value match{
+    case l: List[_] => l.map{DynamicJSON.cast}
+    case _          => Nil
+  }
 
 }
