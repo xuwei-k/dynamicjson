@@ -5,12 +5,12 @@ import java.lang.{Boolean => JBool,Double => JDouble}
 trait DynamicJSON extends Dynamic{
   def applyDynamic(name:String)(args:Any*):DynamicJSON
   def typed[A : Manifest]: Option[A]
-  def array:List[DynamicJSON] = Nil 
+  def array:List[DynamicJSON] = Nil
 }
 
 object DynamicJSON{
   import scala.util.parsing.json.JSON.parseFull
-  
+
   def apply(s:String):DynamicJSON = parseFull(s) match {
     case Some(j:Map[String,Any]) => new DynamicJSONObj(j)
     case None => EmptyJSON
@@ -47,15 +47,15 @@ object DynamicJSON{
     }
     case map:Map[String,Any] => new DynamicJSONObj(map)
   }
- 
+
 }
 
 case class DynamicJSONObj(obj:Map[String,Any]) extends DynamicJSON {
 
   override def typed[A: Manifest] = None
 
-  override def applyDynamic(name: String)(args: Any*): DynamicJSON = DynamicJSON.cast(obj(name)) 
- 
+  override def applyDynamic(name: String)(args: Any*): DynamicJSON = DynamicJSON.cast(obj(name))
+
 }
 
 case object EmptyJSON extends DynamicJSON{
@@ -65,8 +65,8 @@ case object EmptyJSON extends DynamicJSON{
 
 case class ValueJSON[V : Manifest](value: V) extends DynamicJSON {
 
-  override def applyDynamic(name: String)(args: Any*): DynamicJSON = EmptyJSON 
-  override def typed[A: Manifest] = 
+  override def applyDynamic(name: String)(args: Any*): DynamicJSON = EmptyJSON
+  override def typed[A: Manifest] =
     if(manifest[V] == manifest[A])
       Some(value.asInstanceOf[A])
     else
@@ -81,3 +81,18 @@ case class ValueJSON[V : Manifest](value: V) extends DynamicJSON {
   }
 
 }
+
+trait Imports{
+  val  DynamicJSON    = dynamicJSON.DynamicJSON
+  type DynamicJSON    = dynamicJSON.DynamicJSON
+  val  DynamicJSONObj = dynamicJSON.DynamicJSONObj
+  type DynamicJSONObj = dynamicJSON.DynamicJSONObj
+  val  EmptyJSON      = dynamicJSON.EmptyJSON
+  type EmptyJSON      = dynamicJSON.EmptyJSON.type
+  val  ValueJSON      = dynamicJSON.ValueJSON
+  type ValueJSON[V]   = dynamicJSON.ValueJSON[V]
+}
+
+object Imports extends Imports
+
+
