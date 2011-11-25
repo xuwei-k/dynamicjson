@@ -1,4 +1,4 @@
-name := "DynamicJSON"
+name := "dynamicjson"
 
 version := "0.1"
 
