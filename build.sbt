@@ -10,9 +10,7 @@ libraryDependencies ++= Seq(
   "org.specs2"  %% "specs2" % "1.6.1" % "test"
 )
 
-resolvers ++= Seq(
-  "xuwei-k repository" at "http://xuwei-k.github.com/mvn"
-)
+scalacOptions <+= scalaSource in Compile map { "-P:sxr:base-directory:" + _.getAbsolutePath }
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -20,9 +18,9 @@ scalacOptions ++= Seq(
   "-Xexperimental"
 )
 
-addCompilerPlugin("org.scala-tools.sxr" % "sxr_2.9.1" % "0.2.8-SNAPSHOT")
+addCompilerPlugin("org.scala-tools.sxr" % "sxr_2.9.0" % "0.2.7")
 
 initialCommands in console := {
-  "import dynamicJSON._"
+  "import dynamicJSON.Imports._"
 }
 
