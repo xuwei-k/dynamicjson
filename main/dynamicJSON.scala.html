@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" ></meta>
+        <title>dynamicJSON.scala</title>
+        <script type="text/javascript" src="jquery-all.js"></script>
+        <script type="text/javascript" src="linked.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css" title="Style"></link>
+    </head>
+    <body>
+        <pre>
+<span class="keyword">package</span> dynamicJSON
+
+<span class="keyword">import</span> java.lang.<span class="delimiter">{</span>Boolean =&gt; JBool,Double =&gt; JDouble<span class="delimiter">}</span>
+
+<span class="keyword">trait</span> <a title="trait DynamicJSON extends java.lang.Object with Dynamic with ScalaObject" id="9460">DynamicJSON</a> <span title="ScalaObject" class="keyword">extends</span> <span title="Dynamic">Dynamic</span><span class="delimiter">{</span>
+  <span class="keyword">def</span> <a title="(name: String)(args: Any*)dynamicJSON.DynamicJSON" id="9553">applyDynamic</a><span class="delimiter">(</span><a title="String" id="9568">name</a>:<span title="String">String</span><span class="delimiter">)</span><span class="delimiter">(</span><a title="Any*" id="9569">args</a>:<span title="Any*">Any</span>*<span class="delimiter">)</span>:<a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a>
+  <span class="keyword">def</span> <a title="[A](implicit evidence$1: Manifest[A])Option[A]" id="9571">typed</a><span class="delimiter">[</span><a title="&gt;: Nothing &lt;: Any" id="9556">A</a> : Manifest<span class="delimiter">]</span>: <span title="Option[A]">Option</span><span class="delimiter">[</span>A<span class="delimiter">]</span>
+  <span class="keyword">def</span> <a title="=&gt; List[dynamicJSON.DynamicJSON]" id="9557">array</a>:<span title="List[dynamicJSON.DynamicJSON]">List</span><span class="delimiter">[</span>DynamicJSON<span class="delimiter">]</span> = <span title="object Nil">Nil</span>
+<span class="delimiter">}</span>
+
+<span class="keyword">object</span> <a title="object dynamicJSON.DynamicJSON" id="9461">DynamicJSON</a><span title="ScalaObject" class="delimiter">{</span>
+  <span class="keyword">import</span> scala.util.parsing.json.<span title="object scala.util.parsing.json.JSON">JSON</span>.parseFull
+
+  <span class="keyword">def</span> <a title="(s: String)dynamicJSON.DynamicJSON" id="14416">apply</a><span class="delimiter">(</span><a title="String" id="16328">s</a>:<span title="String">String</span><span class="delimiter">)</span>:<a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a> = <span title="(input: String)Option[Any]">parseFull</span><span class="delimiter">(</span><a href="#16328" title="String">s</a><span class="delimiter">)</span> <span title="dynamicJSON.DynamicJSON" class="keyword">match</span> <span class="delimiter">{</span>
+    <span class="keyword">case</span> <span title="dynamicJSON.DynamicJSONObj">Some</span><span class="delimiter">(</span><a title="Map[String,Any]" id="16362">j</a>:<span title="Map[String,Any]">Map</span><span class="delimiter">[</span>String,Any<span class="delimiter">]</span><span class="delimiter">)</span> =&gt; <span title="dynamicJSON.DynamicJSONObj" class="keyword">new</span> <a href="#24319" title="dynamicJSON.DynamicJSONObj">DynamicJSONObj</a><span class="delimiter">(</span><a href="#16362" title="Map[String,Any]">j</a><span class="delimiter">)</span>
+    <span class="keyword">case</span> <span title="dynamicJSON.EmptyJSON.type">None</span> =&gt; <a href="#22114" title="object dynamicJSON.EmptyJSON">EmptyJSON</a>
+  <span class="delimiter">}</span>
+
+  <span class="keyword">val</span> <a title="PartialFunction[Any,dynamicJSON.DynamicJSON]" id="14417">cast</a>:<span title="PartialFunction[Any,dynamicJSON.DynamicJSON]">PartialFunction</span><span class="delimiter">[</span>Any,DynamicJSON<span class="delimiter">]</span> = <a href="#17007" title="dynamicJSON.DynamicJSON" class="delimiter">{</a>
+    <span class="keyword">case</span> <span title="dynamicJSON.EmptyJSON.type" class="keyword">null</span> | <span title="object None">None</span> =&gt; <a href="#22114" title="object dynamicJSON.EmptyJSON">EmptyJSON</a>
+<span class="comment">//  case i: Int     =&gt; ValueJSON(i) // Maybe , Scala standard JSON library not return Int or Long .</span>
+<span class="comment">//  case l: Long    =&gt; ValueJSON(l)</span>
+    <span class="keyword">case</span> <a title="dynamicJSON.ValueJSON[Double]" id="17008">d</a>: <span title="Double">Double</span>  =&gt; <a href="#24325" title="(value: Double)(implicit evidence$4: Manifest[Double])dynamicJSON.ValueJSON[Double]">ValueJSON</a><span title="=&gt; scala.reflect.AnyValManifest[Double]" class="delimiter">(</span><a href="#17008" title="Double">d</a><span class="delimiter">)</span>
+<span class="comment">//    case d: JDouble =&gt; ValueJSON(d.doubleValue) //TODO is this need ?</span>
+    <span class="keyword">case</span> <a title="dynamicJSON.ValueJSON[Boolean]" id="21153">b</a>: <span title="Boolean">Boolean</span> =&gt; <a href="#24325" title="(value: Boolean)(implicit evidence$4: Manifest[Boolean])dynamicJSON.ValueJSON[Boolean]">ValueJSON</a><span title="=&gt; scala.reflect.AnyValManifest[Boolean]" class="delimiter">(</span><a href="#21153" title="Boolean">b</a><span class="delimiter">)</span>
+<span class="comment">//    case b: JBool   =&gt; ValueJSON(b.booleanValue)//TODO is this need ?</span>
+    <span class="keyword">case</span> <a title="dynamicJSON.ValueJSON[String]" id="21161">s</a>: <span title="String">String</span>  =&gt; <a href="#24325" title="(value: String)(implicit evidence$4: Manifest[String])dynamicJSON.ValueJSON[String]">ValueJSON</a><span title="(clazz: Class[_])scala.reflect.Manifest[String]" class="delimiter">(</span><a href="#21161" title="String">s</a><span class="delimiter">)</span>
+    <span class="keyword">case</span> <a title="dynamicJSON.DynamicJSON" id="21215">a</a>: <span title="List[_]">List</span><span class="delimiter">[</span>_<span class="delimiter">]</span> =&gt; <span class="delimiter">{</span>
+      <span class="keyword">val</span> <a title="scala.collection.immutable.Set[java.lang.Class[_]]" id="21217">classes</a> = <a href="#21215" title="List[_]">a</a>.<span title="(z: scala.collection.immutable.Set[java.lang.Class[_]])(f: (scala.collection.immutable.Set[java.lang.Class[_]], _) =&gt; scala.collection.immutable.Set[java.lang.Class[_]])scala.collection.immutable.Set[java.lang.Class[_]]">foldLeft</span><span class="delimiter">(</span><span title="[A](elems: A*)scala.collection.immutable.Set[A]">Set</span><span title="(elems: Class[_]*)scala.collection.immutable.Set[Class[_]]" class="delimiter">[</span><span title="Class[_]">Class</span><span class="delimiter">[</span>_<span class="delimiter">]</span><span class="delimiter">]</span><span class="delimiter">(</span><span class="delimiter">)</span><span class="delimiter">)</span><span class="delimiter">{</span> <span class="delimiter">(</span><a title="scala.collection.immutable.Set[java.lang.Class[_]]" id="21627">set</a>,<a title="_" id="21628">elem</a><span class="delimiter">)</span> =&gt;
+        <a href="#21627" title="scala.collection.immutable.Set[java.lang.Class[_]]">set</a> <span title="(elem: java.lang.Class[_])scala.collection.immutable.Set[java.lang.Class[_]]">+</span> <span class="delimiter">{</span>
+          <span title="java.lang.Class[_1]" class="keyword">if</span><span class="delimiter">(</span><a href="#21628" title="_">elem</a> <span title="(x$1: Any)Boolean">==</span> <span title="Null(null)" class="keyword">null</span><span class="delimiter">)</span> classOf<span title="java.lang.Class[Null](classOf[scala.Null])" class="delimiter">[</span>Null<span class="delimiter">]</span>
+          <span class="keyword">else</span> <a href="#21628" title="_">elem</a>.<span title="[T0]=&gt; T0">asInstanceOf</span><span title="AnyRef" class="delimiter">[</span><span title="AnyRef">AnyRef</span><span class="delimiter">]</span>.<span title="()java.lang.Class[_]">getClass</span>
+        <span class="delimiter">}</span>
+      <span class="delimiter">}</span>
+      <span title="dynamicJSON.DynamicJSON" class="keyword">if</span><span class="delimiter">(</span><a href="#21217" title="scala.collection.immutable.Set[java.lang.Class[_]]">classes</a>.<span title="=&gt; Int">size</span> <span title="(x: Int)Boolean">==</span> <span title="Int(1)" class="int">1</span><span class="delimiter">)</span><span class="delimiter">{</span>
+        <a href="#21215" title="List[_]">a</a>.<span title="=&gt; _">head</span> <span title="dynamicJSON.DynamicJSON" class="keyword">match</span><span class="delimiter">{</span>
+          <span class="keyword">case</span> <span title="dynamicJSON.ValueJSON[List[Double]]">_</span>:<span title="Double">Double</span>  =&gt; <a href="#24325" title="(value: List[Double])(implicit evidence$4: Manifest[List[Double]])dynamicJSON.ValueJSON[List[Double]]">ValueJSON</a><span title="(clazz: Class[List[Double]], arg1: scala.reflect.Manifest[_], args: scala.reflect.Manifest[_]*)scala.reflect.Manifest[List[Double]]" class="delimiter">(</span><a href="#21215" title="List[_]">a</a>.<span title="[T0]=&gt; T0">asInstanceOf</span><span title="List[Double]" class="delimiter">[</span><span title="List[Double]">List</span><span class="delimiter">[</span>Double<span class="delimiter">]</span><span class="delimiter">]</span> <span class="delimiter">)</span>
+<span class="comment">//        case _:JDouble =&gt; ValueJSON(a.asInstanceOf[List[Double]] )//TODO is this need ?</span>
+          <span class="keyword">case</span> <span title="dynamicJSON.ValueJSON[List[Boolean]]">_</span>:<span title="Boolean">Boolean</span> =&gt; <a href="#24325" title="(value: List[Boolean])(implicit evidence$4: Manifest[List[Boolean]])dynamicJSON.ValueJSON[List[Boolean]]">ValueJSON</a><span title="(clazz: Class[List[Boolean]], arg1: scala.reflect.Manifest[_], args: scala.reflect.Manifest[_]*)scala.reflect.Manifest[List[Boolean]]" class="delimiter">(</span><a href="#21215" title="List[_]">a</a>.<span title="[T0]=&gt; T0">asInstanceOf</span><span title="List[Boolean]" class="delimiter">[</span><span title="List[Boolean]">List</span><span class="delimiter">[</span>Boolean<span class="delimiter">]</span><span class="delimiter">]</span><span class="delimiter">)</span>
+<span class="comment">//        case _:JBool   =&gt; ValueJSON(a.asInstanceOf[List[Boolean]])//TODO is this need ?</span>
+          <span class="keyword">case</span> <span title="dynamicJSON.ValueJSON[List[String]]">_</span>:<span title="String">String</span>  =&gt; <a href="#24325" title="(value: List[String])(implicit evidence$4: Manifest[List[String]])dynamicJSON.ValueJSON[List[String]]">ValueJSON</a><span title="(clazz: Class[List[String]], arg1: scala.reflect.Manifest[_], args: scala.reflect.Manifest[_]*)scala.reflect.Manifest[List[String]]" class="delimiter">(</span><a href="#21215" title="List[_]">a</a>.<span title="[T0]=&gt; T0">asInstanceOf</span><span title="List[String]" class="delimiter">[</span><span title="List[String]">List</span><span class="delimiter">[</span>String<span class="delimiter">]</span><span class="delimiter">]</span> <span class="delimiter">)</span>
+          <span class="keyword">case</span> <span title="dynamicJSON.ValueJSON[List[Any]]">_</span>         =&gt; <a href="#24325" title="(value: List[Any])(implicit evidence$4: Manifest[List[Any]])dynamicJSON.ValueJSON[List[Any]]">ValueJSON</a><span title="(clazz: Class[List[Any]], arg1: scala.reflect.Manifest[_], args: scala.reflect.Manifest[_]*)scala.reflect.Manifest[List[Any]]" class="delimiter">(</span><a href="#21215" title="List[_]">a</a>.<span title="[T0]=&gt; T0">asInstanceOf</span><span title="List[Any]" class="delimiter">[</span><span title="List[Any]">List</span><span class="delimiter">[</span>Any<span class="delimiter">]</span><span class="delimiter">]</span> <span class="delimiter">)</span>
+        <span class="delimiter">}</span>
+      <span class="delimiter">}</span><span class="keyword">else</span><span class="delimiter">{</span>
+        <a href="#24325" title="[V](value: V)(implicit evidence$4: Manifest[V])dynamicJSON.ValueJSON[V]">ValueJSON</a><span title="(value: List[Any])(implicit evidence$4: Manifest[List[Any]])dynamicJSON.ValueJSON[List[Any]]" class="delimiter">[</span><span title="List[Any]">List</span><span class="delimiter">[</span>Any<span class="delimiter">]</span><span class="delimiter">]</span><span title="(clazz: Class[List[Any]], arg1: scala.reflect.Manifest[_], args: scala.reflect.Manifest[_]*)scala.reflect.Manifest[List[Any]]" class="delimiter">(</span><a href="#21215" title="List[_]">a</a><span class="delimiter">)</span>
+      <span class="delimiter">}</span>
+    <span class="delimiter">}</span>
+    <span class="keyword">case</span> <a title="dynamicJSON.DynamicJSONObj" id="21847">map</a>:<span title="Map[String,Any]">Map</span><span class="delimiter">[</span>String,Any<span class="delimiter">]</span> =&gt; <span title="dynamicJSON.DynamicJSONObj" class="keyword">new</span> <a href="#24319" title="dynamicJSON.DynamicJSONObj">DynamicJSONObj</a><span class="delimiter">(</span><a href="#21847" title="Map[String,Any]">map</a><span class="delimiter">)</span>
+  <span class="delimiter">}</span>
+
+<span class="delimiter">}</span>
+
+case <span class="keyword">class</span> <a title="class DynamicJSONObj extends java.lang.Object with dynamicJSON.DynamicJSON with ScalaObject with Product with Serializable" id="24319">DynamicJSONObj</a><a href="#24319" title="ScalaObject" class="delimiter">(</a><a title="Map[String,Any]" id="24316">obj</a>:<span title="Map[String,Any]">Map</span><span class="delimiter">[</span>String,Any<span class="delimiter">]</span><span class="delimiter">)</span> <span class="keyword">extends</span> <a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a> <span class="delimiter">{</span>
+
+  <span class="keyword">override</span> <span class="keyword">def</span> <a title="[A](implicit evidence$2: Manifest[A])None.type" id="21850">typed</a><span class="delimiter">[</span><a title="&gt;: Nothing &lt;: Any" id="16976">A</a>: Manifest<span class="delimiter">]</span> = <span title="object None">None</span>
+
+  <span class="keyword">override</span> <span class="keyword">def</span> <a title="(name: String)(args: Any*)dynamicJSON.DynamicJSON" id="16977">applyDynamic</a><span class="delimiter">(</span><a title="String" id="21859">name</a>: <span title="String">String</span><span class="delimiter">)</span><span class="delimiter">(</span><a title="Any*" id="21860">args</a>: <span title="Any*">Any</span>*<span class="delimiter">)</span>: <a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a> = <a href="#9461" title="object dynamicJSON.DynamicJSON">DynamicJSON</a>.<a href="#14417" title="(v1: Any)dynamicJSON.DynamicJSON">cast</a><span class="delimiter">(</span><a href="#24316" title="(key: String)Any">obj</a><span class="delimiter">(</span><a href="#21859" title="String">name</a><span class="delimiter">)</span><span class="delimiter">)</span>
+
+<span class="delimiter">}</span>
+
+case <span class="keyword">object</span> <a href="#22109" title="object dynamicJSON.EmptyJSON" id="22114">EmptyJSON</a> <span title="ScalaObject" class="keyword">extends</span> <a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a><span class="delimiter">{</span>
+  <span class="keyword">override</span> <span class="keyword">def</span> <a title="(name: String)(args: Any*)dynamicJSON.DynamicJSON" id="16993">applyDynamic</a><span class="delimiter">(</span><a title="String" id="22092">name</a>: <span title="String">String</span><span class="delimiter">)</span><span class="delimiter">(</span><a title="Any*" id="22093">args</a>: <span title="Any*">Any</span>*<span class="delimiter">)</span>: <a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a> = <span class="keyword">this</span>
+  <span class="keyword">override</span> <span class="keyword">def</span> <a title="[A](implicit evidence$3: Manifest[A])None.type" id="22095">typed</a><span class="delimiter">[</span><a title="&gt;: Nothing &lt;: Any" id="16996">A</a>: Manifest<span class="delimiter">]</span> = <span title="object None">None</span>
+<span class="delimiter">}</span>
+
+case <span class="keyword">class</span> <a title="class ValueJSON[V] extends java.lang.Object with dynamicJSON.DynamicJSON with ScalaObject with Product with Serializable" id="24325">ValueJSON</a><span class="delimiter">[</span><a title="&gt;: Nothing &lt;: Any" id="17254">V</a> : Manifest<span class="delimiter">]</span><span class="delimiter">(</span><a title="V" id="17273">value</a>: <a href="#17254" title="V">V</a><span class="delimiter">)</span> <span class="keyword">extends</span> <a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a> <span class="delimiter">{</span>
+
+  <span class="keyword">override</span> <span class="keyword">def</span> <a title="(name: String)(args: Any*)dynamicJSON.DynamicJSON" id="17261">applyDynamic</a><span class="delimiter">(</span><a title="String" id="22120">name</a>: <span title="String">String</span><span class="delimiter">)</span><span class="delimiter">(</span><a title="Any*" id="22121">args</a>: <span title="Any*">Any</span>*<span class="delimiter">)</span>: <a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a> = <a href="#22114" title="object dynamicJSON.EmptyJSON">EmptyJSON</a>
+  <span class="keyword">override</span> <span class="keyword">def</span> <a title="[A](implicit evidence$5: Manifest[A])Option[A]" id="22123">typed</a><span class="delimiter">[</span><a title="&gt;: Nothing &lt;: Any" id="17264">A</a>: Manifest<span class="delimiter">]</span> =
+    <span title="Option[A]" class="keyword">if</span><span class="delimiter">(</span><span title="[T](implicit m: Manifest[T])Manifest[T]">manifest</span><a href="#17259" title="(implicit m: Manifest[V])Manifest[V]" class="delimiter">[</a><a href="#17254" title="V">V</a><span class="delimiter">]</span> <span title="(x$1: AnyRef)Boolean">==</span> <span title="[T](implicit m: Manifest[T])Manifest[T]">manifest</span><a href="#22123" title="(implicit m: Manifest[A])Manifest[A]" class="delimiter">[</a><a href="#17264" title="A">A</a><span class="delimiter">]</span><span class="delimiter">)</span>
+      <span title="(x: A)Some[A]">Some</span><span class="delimiter">(</span><a href="#17273" title="=&gt; V">value</a>.<span title="[T0]=&gt; T0">asInstanceOf</span><span title="A" class="delimiter">[</span><a href="#17264" title="A">A</a><span class="delimiter">]</span><span class="delimiter">)</span>
+    <span class="keyword">else</span>
+      <span title="object None">None</span>
+
+  <span class="comment">// debug method</span>
+  <span class="keyword">def</span> <a title="=&gt; String" id="17265">manifestString</a>:<span title="String">String</span> = <span title="[T](implicit m: Manifest[T])Manifest[T]">manifest</span><a href="#17259" title="(implicit m: Manifest[V])Manifest[V]" class="delimiter">[</a><a href="#17254" title="V">V</a><span class="delimiter">]</span>.<span title="()java.lang.String">toString</span>
+
+  <span class="keyword">override</span> <span class="keyword">def</span> <a title="=&gt; List[dynamicJSON.DynamicJSON]" id="17266">array</a> = <a href="#17273" title="=&gt; V">value</a> <span title="List[dynamicJSON.DynamicJSON]" class="keyword">match</span><span class="delimiter">{</span>
+    <span class="keyword">case</span> <a title="List[dynamicJSON.DynamicJSON]" id="22151">l</a>: <span title="List[_]">List</span><span class="delimiter">[</span>_<span class="delimiter">]</span> =&gt; <a href="#22151" title="List[_]">l</a>.<span title="(f: _ =&gt; dynamicJSON.DynamicJSON)(implicit bf: scala.collection.generic.CanBuildFrom[List[_],dynamicJSON.DynamicJSON,List[dynamicJSON.DynamicJSON]])List[dynamicJSON.DynamicJSON]">map</span><span title="scala.collection.generic.CanBuildFrom[scala.collection.immutable.List.Coll,dynamicJSON.DynamicJSON,List[dynamicJSON.DynamicJSON]]" class="delimiter">{</span><a href="#9461" title="object dynamicJSON.DynamicJSON">DynamicJSON</a>.<a href="#14417" title="=&gt; PartialFunction[Any,dynamicJSON.DynamicJSON]">cast</a><span class="delimiter">}</span>
+    <span class="keyword">case</span> <span title="scala.collection.immutable.Nil.type">_</span>          =&gt; <span title="object Nil">Nil</span>
+  <span class="delimiter">}</span>
+
+<span class="delimiter">}</span>
+
+<span class="keyword">trait</span> <a title="trait Imports extends java.lang.Object with ScalaObject" id="9483">Imports</a><span title="ScalaObject" class="delimiter">{</span>
+  <span class="keyword">val</span>  <a title="dynamicJSON.DynamicJSON.type" id="24296">DynamicJSON</a>    = dynamicJSON.<a href="#9461" title="object dynamicJSON.DynamicJSON">DynamicJSON</a>
+  <span class="keyword">type</span> <a title="dynamicJSON.DynamicJSON" id="24298">DynamicJSON</a>    = dynamicJSON.<a href="#9460" title="dynamicJSON.DynamicJSON">DynamicJSON</a>
+  <span class="keyword">val</span>  <a title="dynamicJSON.DynamicJSONObj.type" id="24299">DynamicJSONObj</a> = dynamicJSON.<a href="#24319" title="object dynamicJSON.DynamicJSONObj">DynamicJSONObj</a>
+  <span class="keyword">type</span> <a title="dynamicJSON.DynamicJSONObj" id="24301">DynamicJSONObj</a> = dynamicJSON.<a href="#24319" title="dynamicJSON.DynamicJSONObj">DynamicJSONObj</a>
+  <span class="keyword">val</span>  <a title="dynamicJSON.EmptyJSON.type" id="24302">EmptyJSON</a>      = dynamicJSON.<a href="#22114" title="object dynamicJSON.EmptyJSON">EmptyJSON</a>
+  <span class="keyword">type</span> <a title="dynamicJSON.EmptyJSON.type" id="24304">EmptyJSON</a>      = dynamicJSON.EmptyJSON.<span class="keyword">type</span>
+  <span class="keyword">val</span>  <a title="dynamicJSON.ValueJSON.type" id="24305">ValueJSON</a>      = dynamicJSON.<a href="#24325" title="object dynamicJSON.ValueJSON">ValueJSON</a>
+  <span class="keyword">type</span> <a title="[V]dynamicJSON.ValueJSON[V]" id="24307">ValueJSON</a><span class="delimiter">[</span><a title="&gt;: Nothing &lt;: Any" id="24308">V</a><span class="delimiter">]</span>   = dynamicJSON.<a href="#24325" title="dynamicJSON.ValueJSON[V]">ValueJSON</a><span class="delimiter">[</span>V<span class="delimiter">]</span>
+<span class="delimiter">}</span>
+
+<span class="keyword">object</span> <a title="object dynamicJSON.Imports" id="9484">Imports</a> <span title="ScalaObject" class="keyword">extends</span> <a href="#9483" title="dynamicJSON.Imports">Imports</a>
+
+
+
+        </pre>
+    </body>
+</html>
