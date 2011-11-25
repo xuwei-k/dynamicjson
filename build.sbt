@@ -1,6 +1,6 @@
 name := "DynamicJSON"
 
-version := "0.1-SNAPSHOT"
+version := "0.1"
 
 organization := "com.github.xuwei-k"
 
@@ -24,3 +24,8 @@ initialCommands in console := {
   "import dynamicJSON.Imports._"
 }
 
+seq(lsSettings: _*)
+
+(externalResolvers in LsKeys.lsync) := Seq(
+  "xuwei-k github maven repository" at "http://xuwei-k.github.com/mvn/"
+)
