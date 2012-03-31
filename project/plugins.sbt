@@ -1,4 +1,4 @@
-addSbtPlugin("me.lessis" % "ls-sbt" % "0.1.0")
+//addSbtPlugin("me.lessis" % "ls-sbt" % "0.1.0")
 
 resolvers ++= Seq(
   "less is" at "http://repo.lessis.me",
