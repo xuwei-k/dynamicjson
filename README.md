@@ -1,4 +1,4 @@
-# DynamicJSON
+# DynamicJSON [![Build Status](https://secure.travis-ci.org/xuwei-k/dynamicjson.png)](http://travis-ci.org/xuwei-k/dynamicjson)
 
 ## A simple wrapper Scala Standard library JSON
 
