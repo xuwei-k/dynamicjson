@@ -1,10 +1,12 @@
 package dynamicJSON
 
 import java.lang.{Boolean => JBool,Double => JDouble}
+import language._
+import reflect.TypeTag
 
 trait DynamicJSON extends Dynamic{
-  def applyDynamic(name:String)(args:Any*):DynamicJSON
-  def typed[A : Manifest]: Option[A]
+  def selectDynamic(name:String):DynamicJSON
+  def typed[A : TypeTag]: Option[A]
   def array:List[DynamicJSON] = Nil
 }
 
@@ -52,28 +54,28 @@ object DynamicJSON{
 
 case class DynamicJSONObj(obj:Map[String,Any]) extends DynamicJSON {
 
-  override def typed[A: Manifest] = None
+  override def typed[A: TypeTag] = None
 
-  override def applyDynamic(name: String)(args: Any*): DynamicJSON = DynamicJSON.cast(obj(name))
+  override def selectDynamic(name: String): DynamicJSON = DynamicJSON.cast(obj(name))
 
 }
 
 case object EmptyJSON extends DynamicJSON{
-  override def applyDynamic(name: String)(args: Any*): DynamicJSON = this
-  override def typed[A: Manifest] = None
+  override def selectDynamic(name: String): DynamicJSON = this
+  override def typed[A: TypeTag] = None
 }
 
-case class ValueJSON[V : Manifest](value: V) extends DynamicJSON {
+case class ValueJSON[V : TypeTag](value: V) extends DynamicJSON {
 
-  override def applyDynamic(name: String)(args: Any*): DynamicJSON = EmptyJSON
-  override def typed[A: Manifest] =
-    if(manifest[V] == manifest[A])
+  override def selectDynamic(name: String): DynamicJSON = EmptyJSON
+  override def typed[A: TypeTag] =
+    if(implicitly[TypeTag[V]] == implicitly[TypeTag[A]])
       Some(value.asInstanceOf[A])
     else
       None
 
   // debug method
-  def manifestString:String = manifest[V].toString
+  def manifestString:String = implicitly[TypeTag[V]].toString
 
   override def array = value match{
     case l: List[_] => l.map{DynamicJSON.cast}

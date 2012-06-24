@@ -4,14 +4,9 @@ version := "0.1.1-SNAPSHOT"
 
 organization := "com.github.xuwei-k"
 
-scalaVersion := "2.9.1"
+scalaVersion := "2.10.0-M4"
 
-crossScalaVersions ++= Seq("2.10.0-M2","2.9.2")
-
-libraryDependencies ++= Seq(
-  "org.specs2"  % "specs2_2.9.1" % "1.9" % "test"
-)
-
+libraryDependencies += "com.novocode" % "junit-interface" % "0.9-RC2" % "test->default"
 
 scalacOptions ++= Seq(
   "-deprecation",
