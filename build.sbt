@@ -4,7 +4,11 @@ version := "0.1.1-SNAPSHOT"
 
 organization := "com.github.xuwei-k"
 
-scalaVersion := "2.10.0-M4"
+scalaVersion := "2.10.0-RC3"
+
+scalaBinaryVersion <<= scalaVersion
+
+crossVersion := CrossVersion.full
 
 libraryDependencies += "com.novocode" % "junit-interface" % "0.9-RC2" % "test->default"
 
