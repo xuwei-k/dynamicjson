@@ -1,6 +1,6 @@
 name := "dynamicjson"
 
-version := "0.1.1"
+version := "0.1.2-SNAPSHOT"
 
 organization := "com.github.xuwei-k"
 
@@ -20,12 +20,10 @@ initialCommands in console := {
 
 resolvers += Opts.resolver.sonatypeReleases
 
-/*
-seq(lsSettings: _*)
-(externalResolvers in LsKeys.lsync) := Seq(
-  "xuwei-k github maven repository" at "http://xuwei-k.github.com/mvn/"
-)
-*/
+licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
+
+homepage := Some(url("https://github.com/xuwei-k/dynamicjson"))
+
 publishTo := {
   sys.env.get("MAVEN_DIRECTORY").map{ dir =>
     Resolver.file("gh-pages",file(dir))(Patterns(true, Resolver.mavenStyleBasePattern))
