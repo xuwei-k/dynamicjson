@@ -4,13 +4,9 @@ version := "0.1.1-SNAPSHOT"
 
 organization := "com.github.xuwei-k"
 
-scalaVersion := "2.10.0-RC3"
+scalaVersion := "2.10.0"
 
-scalaBinaryVersion <<= scalaVersion
-
-crossVersion := CrossVersion.full
-
-libraryDependencies += "com.novocode" % "junit-interface" % "0.9-RC2" % "test->default"
+libraryDependencies += "com.novocode" % "junit-interface" % "0.10-M2" % "test->default"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -18,15 +14,11 @@ scalacOptions ++= Seq(
   "-Xexperimental"
 )
 
-//scalacOptions <+= scalaSource in Compile map { "-P:sxr:base-directory:" + _.getAbsolutePath }
-//addCompilerPlugin("org.scala-tools.sxr" %% "sxr" % "0.2.8-SNAPSHOT")
 initialCommands in console := {
   "import dynamicJSON.Imports._"
 }
 
-resolvers ++= Seq(
-  "https://oss.sonatype.org/content/repositories/releases/"
-).map{u => u at u}
+resolvers += Opts.resolver.sonatypeReleases
 
 /*
 seq(lsSettings: _*)
