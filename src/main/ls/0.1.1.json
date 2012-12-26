@@ -1,0 +1,17 @@
+{
+  "organization" : "com.github.xuwei-k",
+  "name" : "dynamicjson",
+  "version" : "0.1.1",
+  "description" : "dynamicjson",
+  "site" : "https://github.com/xuwei-k/dynamicjson",
+  "tags" : [ "json" ],
+  "docs" : "",
+  "resolvers" : [ "http://xuwei-k.github.com/mvn/" ],
+  "dependencies" : [ ],
+  "scalas" : [ "2.10.0" ],
+  "licenses" : [ {
+    "name" : "MIT",
+    "url" : "http://opensource.org/licenses/MIT"
+  } ],
+  "sbt" : false
+}
