@@ -16,7 +16,7 @@ scalaVersion := "2.10.0"
 
 libraryDependencies += "com.github.xuwei-k" %% "dynamicjson" % "0.1.1" 
 
-resolvers += "xuwei-k github" at "http://xuwei-k.github.com/mvn/"
+resolvers += "xuwei-k github" at "http://xuwei-k.github.io/mvn/"
 ```
 
 
